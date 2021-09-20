@@ -14,11 +14,11 @@ Well, here's a sample instruction
 OP_ADD acc, #10 // add number 10 to accumulator
 OP_ADD acc, 10 // add contents of data residing in global data buffer accessed using index 10
 ```
-Instructions can be represented in binary form
+Instructions can be represented in binary form.
 For instance, here's a binary equivalent  of the first instruction:
 ```
 000     10   00001010       1
 OP_ADD  acc    #10     using number
 ```
 
-The last bit indicates whether a second operand is a number or a reference to global data buffer. As you can see we, it only has a room for numbers ranging from [-127,127) or [0, 256).
+The last bit indicates whether a second operand is a number or a reference to global data buffer.
