@@ -1,24 +1,8 @@
-# Bytecode instructions
+# Preamble
+Hey, stranger! In this chapter of my repositorial life, i'll try to make something i have never done before -- to design a cpu and build an assembler for it.
 
-OP_ADD = 000
-OP_SUB = 001
-OP_MUL = 010
-OP_DIV = 011
-OP_DOT = 100
-OP_CROSS = 101
+The project is considered to be a one-time, working-on-weekends, no-huge-plans-involved, and probably a long-term one. 
 
-###### 6 opcodes (3 bits), 3 registers (24 bytes), vector type (24 bytes for one vector)
+# Design decisions
+The actual cpu is going to be built in Logisim Evolution. Speaking of assembler, the latter will be written in C++.
 
-Well, here's a sample instruction
-```c++
-OP_ADD acc, #10 // add number 10 to accumulator
-OP_ADD acc, 10 // add contents of data residing in global data buffer accessed using index 10
-```
-Instructions can be represented in binary form.
-For instance, here's a binary equivalent  of the first instruction:
-```
-000     10   00001010       1
-OP_ADD  acc    #10     using number
-```
-
-The last bit indicates whether a second operand is a number or a reference to global data buffer.
