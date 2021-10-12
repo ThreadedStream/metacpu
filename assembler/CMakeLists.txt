@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.20)
-project(metaprogram)
+project(metacpu_asm)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(metaprogram
+add_executable(metacpu_asm
+        assembler.h
+        assembler.cpp
+        tokenizer.h
         main.cpp)
