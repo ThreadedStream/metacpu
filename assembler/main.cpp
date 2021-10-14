@@ -9,6 +9,7 @@
 
 #include "tokenizer.h"
 #include "assembler.h"
+#include "tools.h"
 
 std::map<const char *, int16_t> symbol_table;
 
@@ -24,12 +25,11 @@ typedef Token (*HandlerFuncPtr)(const char *src, int32_t src_len, int32_t &pos);
 // sub label    - subtract value at address aliased by label from acc
 // bz  label    - branch to label if acc = 0
 // str label    - store value at address aliased by label into acc
-std::map<std::string, HandlerFuncPtr> handlers = {
-        {"addi", &Parser::addi},
-        {"subi", &Parser::subi},
-        {"add", &Parser::add}
-        {"clac", &Parser::clac},
-
+std::map<std::string, HandlerFuncPtr> opcode_handlers = {
+        {"addi", &Tokenizer::addi},
+        {"subi", &Tokenizer::subi},
+        {"add", &Tokenizer::add},
+        {"clac", &Tokenizer::clac},
 };
 
 
@@ -65,7 +65,7 @@ void parse(const char *src) {
         if (isspace(curr_c)) {
             continue;
         }
-        const auto handler = handlers[token];
+        const auto handler = opcode_handlers[token];
         if (handler) {
             tokens.push_back(handler(src, len, i));
             token = "";
@@ -82,29 +82,6 @@ void parse(const char *src) {
 }
 
 
-char *loadSrcIntoMemory(const char *const path) {
-    std::ifstream stream(path, std::ios::in | std::ios::app);
-    if (!stream) {
-        fputs("[[error]] make sure that path to the file is correct\n", stderr);
-        return nullptr;
-    }
-
-    stream.seekg(0, std::ios::end);
-    const auto file_size = stream.tellg();
-    stream.seekg(0);
-
-    char *src = static_cast<char *>(calloc(file_size, sizeof(char)));
-    if (!src) {
-        std::fputs("[[error]] failed to allocate memory for a source buffer\n", stderr);
-        return nullptr;
-    }
-    if (!stream.read(src, file_size)) {
-        fputs("[[error]] failed to read from a file\n", stderr);
-        return nullptr;
-    }
-
-    return src;
-}
 
 
 #if 0
@@ -128,7 +105,7 @@ void resolveLabels(char *src) {
 
 int main(int argc, const char *argv[]) {
 
-    char *src = loadSrcIntoMemory("../../samples/sample.asm");
+    char *src = tools::loadFileIntoMemory("../../samples/sample.asm");
     parse(src);
 
     free(src);

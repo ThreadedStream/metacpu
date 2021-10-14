@@ -7,4 +7,7 @@ add_executable(metacpu_asm
         assembler.h
         assembler.cpp
         tokenizer.h
+        tools.h
+        token.h
+        tokenizer.cpp
         main.cpp)

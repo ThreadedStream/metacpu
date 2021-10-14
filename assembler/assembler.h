@@ -1,21 +1,26 @@
 #pragma once
-#include "tokenizer.h"
 #include <cstdint>
-#include <memory>
+#include <unordered_map>
 
-class Parser {
-public:
+#include "tools.h"
 
-    static Token addi(const char* src, int32_t src_len, int32_t& pos);
-    static Token subi(const char* src, int32_t src_len, int32_t& pos);
-    static Token add(const char* src, int32_t src_len, int32_t& pos);
-    static Token sub(const char* src, int32_t src_len, int32_t& pos);
-    static Token str(const char* src, int32_t& pos);
-    static Token bz(const char* src, int32_t& pos);
-    static Token clac(const char * src, int32_t src_len, int32_t& pos);
-    static Token* number(const char* src, int32_t len, int32_t& pos);
-    static Token* label(const char* src, int32_t len, int32_t& pos);
+#define CALL(str)
 
-    static Token* operand(const char* src, int32_t src_len, int32_t &pos);
+class Assembler {
+    Assembler(const char* path) {
+        asm_source_ = tools::loadFileIntoMemory(path);
+    }
 
+
+    void generateSymbolTable();
+
+private:
+    void parseLabel(uint32_t &pos, uint32_t len);
+
+private:
+    uint32_t lc_{0};
+    std::unordered_map<const char*, uint32_t> proc_sym_table_;
+    std::unordered_map<const char*, uint32_t> data_var_sym_table_;
+    const char* asm_source_;
 };
+
