@@ -506,7 +506,7 @@ end TCL_Generic;
     <a name="simulationFrequency" val="1.0"/>
     <comp lib="0" loc="(40,250)" name="Pin">
       <a name="radix" val="16"/>
-      <a name="width" val="8"/>
+      <a name="width" val="16"/>
     </comp>
     <comp lib="0" loc="(40,330)" name="Pin"/>
     <comp lib="0" loc="(40,380)" name="Pin"/>

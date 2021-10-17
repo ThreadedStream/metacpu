@@ -1,22 +1,21 @@
 #include "tokenizer.h"
 #include <string>
 
-
-Token Tokenizer::addi(const char* src, int32_t src_len, int32_t& pos) {
+Token Tokenizer::addi(const char *src, int32_t src_len, int32_t &pos) {
     Token addi_token = {
-            .type = TokenType::OPCODE,
-            .name = "addi",
-            };
+            TokenType::OPCODE,
+            "addi",
+    };
 
     addi_token.operand = Tokenizer::number(src, src_len, pos);
 
     return addi_token;
 }
 
-Token Tokenizer::subi(const char* src, int32_t src_len, int32_t& pos) {
+Token Tokenizer::subi(const char *src, int32_t src_len, int32_t &pos) {
     Token subi_token = {
-            .type = TokenType::OPCODE,
-            .name = "subi"
+            TokenType::OPCODE,
+            "subi"
     };
 
     subi_token.operand = Tokenizer::number(src, src_len, pos);
@@ -24,10 +23,10 @@ Token Tokenizer::subi(const char* src, int32_t src_len, int32_t& pos) {
     return subi_token;
 }
 
-Token Tokenizer::sub(const char* src, int32_t src_len, int32_t &pos) {
+Token Tokenizer::sub(const char *src, int32_t src_len, int32_t &pos) {
     Token sub_token = {
-            .type = TokenType::OPCODE,
-            .name = "sub"
+            TokenType::OPCODE,
+            "sub"
     };
 
     sub_token.operand = Tokenizer::label(src, src_len, pos);
@@ -35,10 +34,10 @@ Token Tokenizer::sub(const char* src, int32_t src_len, int32_t &pos) {
     return sub_token;
 }
 
-Token Tokenizer::add(const char* src, int32_t src_len, int32_t &pos) {
+Token Tokenizer::add(const char *src, int32_t src_len, int32_t &pos) {
     Token add_token = {
-            .type = TokenType::OPCODE,
-            .name = "add"
+            TokenType::OPCODE,
+            "add"
     };
 
     add_token.operand = Tokenizer::label(src, src_len, pos);
@@ -46,22 +45,22 @@ Token Tokenizer::add(const char* src, int32_t src_len, int32_t &pos) {
     return add_token;
 }
 
-Token Tokenizer::clac(const char* src, int32_t src_len, int32_t& pos) {
+Token Tokenizer::clac(const char *src, int32_t src_len, int32_t &pos) {
     Token clac_token = {
-            .type = TokenType::OPCODE,
-            .name = "clac"
+            TokenType::OPCODE,
+            "clac"
     };
 
     return clac_token;
 }
 
-Token* Tokenizer::number(const char* src, int32_t len, int32_t& pos) {
+Token *Tokenizer::number(const char *src, int32_t len, int32_t &pos) {
     std::string str_num;
     for (auto curr = *(src + pos); isdigit(curr) && curr != ';'; pos++, curr = *(src + pos)) {
         str_num += curr;
     }
 
-    auto number_token = static_cast<Token*>(malloc(sizeof(Token)));
+    auto number_token = static_cast<Token *>(malloc(sizeof(Token)));
     number_token->type = TokenType::NUMBER;
     number_token->name = str_num.c_str();
     number_token->value_int = std::atoi(str_num.c_str());
@@ -69,21 +68,21 @@ Token* Tokenizer::number(const char* src, int32_t len, int32_t& pos) {
     return number_token;
 }
 
-Token Tokenizer::str(const char* src, int32_t& pos) {
+Token Tokenizer::str(const char *src, int32_t &pos) {
     Token str_token = {
-            .type = TokenType::OPCODE,
-            .name = "str"
+            TokenType::OPCODE,
+            "str"
     };
 
     return str_token;
 }
 
-Token* Tokenizer::label(const char* src, int32_t len, int32_t& pos) {
+Token *Tokenizer::label(const char *src, int32_t len, int32_t &pos) {
     std::string str;
-    for (auto curr = *(src + pos); isalpha(curr) && curr != ';'; pos++, curr = *(src + pos)){
+    for (auto curr = *(src + pos); isalpha(curr) && curr != ';'; pos++, curr = *(src + pos)) {
         str += curr;
     }
-    auto address_token = static_cast<Token*>(malloc(sizeof(Token)));
+    auto address_token = static_cast<Token *>(malloc(sizeof(Token)));
     address_token->type = TokenType::LABEL;
     address_token->name = str.c_str();
     address_token->value_str = str.c_str();
@@ -91,18 +90,17 @@ Token* Tokenizer::label(const char* src, int32_t len, int32_t& pos) {
     return address_token;
 }
 
-Token* Tokenizer::operand(const char* src, int32_t src_len, int32_t& pos) {
+Token *Tokenizer::operand(const char *src, int32_t src_len, int32_t &pos) {
     std::string token;
-    for ( auto curr_c = *(src + pos); curr_c != ';' && pos < src_len; pos++, curr_c = *(src + pos)) {
-        if (curr_c == ' '  || curr_c == '\t' || curr_c == '\r')
+    for (auto curr_c = *(src + pos); curr_c != '\n' && pos < src_len; pos++, curr_c = *(src + pos)) {
+        if (curr_c == ' ' || curr_c == '\t' || curr_c == '\r')
             continue;
         else if (isdigit(curr_c))
             return Tokenizer::number(src, src_len, pos);
         else if (isalpha(curr_c))
             return Tokenizer::label(src, src_len, pos);
         else
-            // NOTE(threadedstream): for now, we know FOR SURE that the last option is a label
-            token += curr_c;
+			token += curr_c;
     }
 
     return nullptr;

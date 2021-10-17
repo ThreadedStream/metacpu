@@ -25,61 +25,18 @@ typedef Token (*HandlerFuncPtr)(const char *src, int32_t src_len, int32_t &pos);
 // sub label    - subtract value at address aliased by label from acc
 // bz  label    - branch to label if acc = 0
 // str label    - store value at address aliased by label into acc
-std::map<std::string, HandlerFuncPtr> opcode_handlers = {
+std::map<std::string, HandlerFuncPtr> instruction_handlers = {
         {"addi", &Tokenizer::addi},
         {"subi", &Tokenizer::subi},
         {"add", &Tokenizer::add},
         {"clac", &Tokenizer::clac},
 };
 
-
 // Phases of a metacpu assembler
 // 1) resolve aliases (labels)
 // 2) parse the resolved assembly code
 // 3) generate an equivalent machine code
 
-/*
-	Example program:
-.text
-	clac
-	addi 52
-	subi 32
-	str  a
-.endtext
-.data
-	.label a
-.endata
-*/
-
-void parseDirective() {
-}
-
-
-void parse(const char *src) {
-    assert(src != nullptr && "src is nullptr!!!!");
-    std::string token;
-    const auto len = strlen(src);
-    char curr_c{0};
-    for (int32_t i = 0; i < len; i++) {
-        curr_c = *(src + i);
-        if (isspace(curr_c)) {
-            continue;
-        }
-        const auto handler = opcode_handlers[token];
-        if (handler) {
-            tokens.push_back(handler(src, len, i));
-            token = "";
-            continue;
-        }
-        if (curr_c == '.') {
-            parseDirective();
-            token = "";
-            continue;
-        } else {
-            token += curr_c;
-        }
-    }
-}
 
 
 
@@ -105,14 +62,20 @@ void resolveLabels(char *src) {
 
 int main(int argc, const char *argv[]) {
 
-    char *src = tools::loadFileIntoMemory("../../samples/sample.asm");
-    parse(src);
+    //char *src = tools::loadFileIntoMemory("");
 
-    free(src);
-    for (auto &token : tokens) {
-        free(token.operand);
-        token.operand = nullptr;
-    }
+    Assembler assembler("D:\\toys\\metacpu\\assembler\\samples\\sample.asm");
+
+    assembler.generateSymbolTable();
+
+	const auto proc_sym_table = assembler.procSymTable();
+	const auto var_sym_table = assembler.dataVarSymTable();
+	
+	
+//    for (auto &token : tokens) {
+//        free(token.operand);
+//        token.operand = nullptr;
+//    }
 
     return 0;
 }
