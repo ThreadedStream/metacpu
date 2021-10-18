@@ -1,8 +1,10 @@
-clac
-addi 6
 .start:
+	clac
+	addi 6
+
+.loop:
 	subi 1
-	bnz start
+	bnz loop	
 	ucb end
 
 .end:

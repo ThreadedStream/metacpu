@@ -10,6 +10,7 @@
 #include "tokenizer.h"
 #include "assembler.h"
 #include "tools.h"
+#include "instruction.h"
 
 std::map<const char *, int16_t> symbol_table;
 
@@ -39,8 +40,6 @@ std::map<std::string, HandlerFuncPtr> instruction_handlers = {
 
 
 
-
-
 #if 0
 void resolveLabels(char *src) {
     assert(src != nullptr && "src is nullptr!!!");
@@ -62,20 +61,14 @@ void resolveLabels(char *src) {
 
 int main(int argc, const char *argv[]) {
 
-    //char *src = tools::loadFileIntoMemory("");
-
     Assembler assembler("D:\\toys\\metacpu\\assembler\\samples\\sample.asm");
 
     assembler.generateSymbolTable();
+	
+	//assembleInstruction("leave", 0x1, 0xFF);
 
 	const auto proc_sym_table = assembler.procSymTable();
 	const auto var_sym_table = assembler.dataVarSymTable();
 	
-	
-//    for (auto &token : tokens) {
-//        free(token.operand);
-//        token.operand = nullptr;
-//    }
-
     return 0;
 }

@@ -3,7 +3,7 @@
 
 Token Tokenizer::addi(const char *src, int32_t src_len, int32_t &pos) {
     Token addi_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "addi",
     };
 
@@ -14,7 +14,7 @@ Token Tokenizer::addi(const char *src, int32_t src_len, int32_t &pos) {
 
 Token Tokenizer::subi(const char *src, int32_t src_len, int32_t &pos) {
     Token subi_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "subi"
     };
 
@@ -25,7 +25,7 @@ Token Tokenizer::subi(const char *src, int32_t src_len, int32_t &pos) {
 
 Token Tokenizer::sub(const char *src, int32_t src_len, int32_t &pos) {
     Token sub_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "sub"
     };
 
@@ -36,7 +36,7 @@ Token Tokenizer::sub(const char *src, int32_t src_len, int32_t &pos) {
 
 Token Tokenizer::add(const char *src, int32_t src_len, int32_t &pos) {
     Token add_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "add"
     };
 
@@ -47,7 +47,7 @@ Token Tokenizer::add(const char *src, int32_t src_len, int32_t &pos) {
 
 Token Tokenizer::clac(const char *src, int32_t src_len, int32_t &pos) {
     Token clac_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "clac"
     };
 
@@ -70,7 +70,7 @@ Token *Tokenizer::number(const char *src, int32_t len, int32_t &pos) {
 
 Token Tokenizer::str(const char *src, int32_t &pos) {
     Token str_token = {
-            TokenType::OPCODE,
+            TokenType::INSTRUCTION,
             "str"
     };
 

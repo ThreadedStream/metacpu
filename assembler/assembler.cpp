@@ -1,9 +1,20 @@
 #include <cassert>
 #include <cstring>
 #include <algorithm>
+#include <cstdlib>
 
 #include "assembler.h"
 #include "token.h"
+#include "instruction.h"
+
+
+#define ASSERT_WITH_CLEANUP(cond, fmt, ...) \
+if (!(cond)) { \
+		fprintf(stderr, fmt, __VA_ARGS__); \
+		cleanup(); \
+		exit(-1); \
+} 
+
 
 
 void Assembler::generateSymbolTable() {
@@ -16,14 +27,19 @@ void Assembler::generateSymbolTable() {
 		if (curr_c == '.') {
 			// advance position in order to skip '.'
 			pos++;
-			parseLabel(pos, len);
+			const auto label_name = getLabelName(pos, len);
+			// store that into symbol table
+			proc_sym_table_.emplace(label_name, pc_);
+
 		} else if (isascii(curr_c) && isspace(curr_c)) {
             continue;
-        } else {
-            token += curr_c;
+		} else {
+			token += curr_c;
+
+			const auto it = instructions.find(token);
 			// increment pc in case of encountered instruction
-			if (instructions[token]) {
-                fprintf(stdout, "%s\n", token.c_str());
+			if (it != instructions.cend() && pos+1 < len && isspace(asm_source_[pos+1])) {
+                fprintf(stdout, "Token: %s, Mode: %d\n", token.c_str(), it->second);
                 pc_++;
                 nextLine(pos, len);
                 token = "";
@@ -43,6 +59,80 @@ void Assembler::generateSymbolTable() {
     }
 }
 
+void Assembler::assemble() {	
+	std::string machine_code;
+	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
+	const auto len = strlen(asm_source_);
+	std::string token;
+	char curr_c;
+	for (uint32_t pos = 0; pos < len, isascii(asm_source_[pos]); ++pos) {
+		curr_c = asm_source_[pos];
+		if (curr_c == '.') {
+			// ignore labels
+			nextLine(pos, len);
+		}
+		else if (isascii(curr_c) && isspace(curr_c)) {
+			continue;
+		}
+		else {
+			token += curr_c;
+			
+			const auto it = instructions.find(token);
+			if (it != instructions.cend() && pos + 1 < len && isspace(asm_source_[pos + 1])) {
+				if (it->second == InstructionMode::NONE) {
+					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0);
+					machine_code += ' ';
+				}
+				else if (it->second == InstructionMode::IMMEDIATE) {
+					const auto value = fetchImmediateOperand(pos, len);
+					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), value);
+					machine_code += ' ';
+				}
+				else {
+					const auto value = fetchMemoryOperand(pos, len);
+					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), value);
+					machine_code += ' ';
+				}
+			}
+		}
+	}
+}
+
+uint32_t Assembler::fetchMemoryOperand(uint32_t &pos, uint32_t len) {
+	eatWhitespaces(pos, len);
+	std::string value;
+	while (pos < len && asm_source_[pos] != '\n') {
+		value += asm_source_[pos];
+	}
+
+	const auto label_it = proc_sym_table_.find(value);
+	const auto var_it = data_var_sym_table_.find(value);
+
+	const auto multiple_definition_cond = label_it != proc_sym_table_.cend() && var_it != data_var_sym_table_.cend();
+	// make sure value does not exist in both symbol tables
+	ASSERT_WITH_CLEANUP(!multiple_definition_cond, "multiple definition of %s", value);
+	// make sure value does reside at least in one of the symbol tables
+	ASSERT_WITH_CLEANUP(multiple_definition_cond, "unresolved symbol %s", value);
+
+	if (label_it != proc_sym_table_.cend()) {
+		return proc_sym_table_[value];
+	}
+	else {
+		return data_var_sym_table_[value];
+	}
+}
+
+
+
+uint32_t Assembler::fetchImmediateOperand(uint32_t& pos, uint32_t len) {
+	eatWhitespaces(pos, len);
+	std::string value;
+	while (pos < len && asm_source_[pos] != '\n') {
+		value += asm_source_[pos];
+	}
+	
+	return static_cast<uint32_t>(atoi(value.c_str()));
+}
 
 void Assembler::nextLine(uint32_t &pos, const uint32_t len) {
     while (pos < len && asm_source_[pos] != '\n') {
@@ -87,9 +177,7 @@ void Assembler::parseVarBlock(uint32_t &pos, uint32_t len) {
 
 void Assembler::expectSymbol(uint8_t symbol, uint32_t& pos, uint32_t len) {
 	if (pos < len) {
-		static char error_buffer[64];
-		sprintf(error_buffer, "expected %c", symbol);
-		assert(asm_source_[pos] == symbol && error_buffer);
+		ASSERT_WITH_CLEANUP(asm_source_[pos] == symbol, "expected %c", symbol);
 	}
 	else {
 		return;
@@ -98,14 +186,22 @@ void Assembler::expectSymbol(uint8_t symbol, uint32_t& pos, uint32_t len) {
 	pos++;
 }
 
-void Assembler::parseLabel(uint32_t& pos, uint32_t len) {
+
+uint32_t Assembler::lookupLabel(const std::string& name) {
+	const auto val = proc_sym_table_[name];
+	ASSERT_WITH_CLEANUP(val != 0, "unresolved label %s", name);
+
+	return val;
+}
+
+
+std::string Assembler::getLabelName(uint32_t& pos, uint32_t len) {
     std::string label;
     while (pos < len && asm_source_[pos] != ':') {
         label += asm_source_[pos];
         pos++;
     }
-
-    // store that into symbol table
-    proc_sym_table_.emplace(label.c_str(), pc_);
+	
+	return label;
 }
 
