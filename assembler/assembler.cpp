@@ -16,7 +16,6 @@ if (!(cond)) { \
 } 
 
 
-
 void Assembler::generateSymbolTable() {
 	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
 	const auto len = strlen(asm_source_);
@@ -30,7 +29,7 @@ void Assembler::generateSymbolTable() {
 			const auto label_name = getLabelName(pos, len);
 			// store that into symbol table
 			proc_sym_table_.emplace(label_name, pc_);
-
+		
 		} else if (isascii(curr_c) && isspace(curr_c)) {
             continue;
 		} else {
@@ -61,6 +60,8 @@ void Assembler::generateSymbolTable() {
 
 void Assembler::assemble() {	
 	std::string machine_code;
+
+	std::vector<uint16_t> machine_code_16_bit;
 	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
 	const auto len = strlen(asm_source_);
 	std::string token;
@@ -76,49 +77,63 @@ void Assembler::assemble() {
 		}
 		else {
 			token += curr_c;
-			
+										
 			const auto it = instructions.find(token);
 			if (it != instructions.cend() && pos + 1 < len && isspace(asm_source_[pos + 1])) {
+				pos++;
 				if (it->second == InstructionMode::NONE) {
-					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0);
-					machine_code += ' ';
+					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0));
+					//machine_code += ' ';
+					token = "";
 				}
 				else if (it->second == InstructionMode::IMMEDIATE) {
 					const auto value = fetchImmediateOperand(pos, len);
-					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), value);
-					machine_code += ' ';
+					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), value));
+					//machine_code += ' ';
+					token = "";
 				}
 				else {
+					// Memory instruction mode
 					const auto value = fetchMemoryOperand(pos, len);
-					machine_code += assembleInstruction(token, static_cast<uint16_t>(it->second), value);
-					machine_code += ' ';
+					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), value));
+					//machine_code += ' ';
+					token = "";
 				}
 			}
 		}
 	}
+	
+	const auto success = tools::cStyleWriteToFile("D:\\toys\\metacpu\\assembler\\samples\\sample.bin", machine_code_16_bit);
+	ASSERT_WITH_CLEANUP(success, "");
 }
 
 uint32_t Assembler::fetchMemoryOperand(uint32_t &pos, uint32_t len) {
 	eatWhitespaces(pos, len);
 	std::string value;
-	while (pos < len && asm_source_[pos] != '\n') {
+	while (pos < len && !isspace(asm_source_[pos])) {
 		value += asm_source_[pos];
+		pos++;
 	}
 
 	const auto label_it = proc_sym_table_.find(value);
 	const auto var_it = data_var_sym_table_.find(value);
 
-	const auto multiple_definition_cond = label_it != proc_sym_table_.cend() && var_it != data_var_sym_table_.cend();
+
 	// make sure value does not exist in both symbol tables
+	const auto multiple_definition_cond = label_it != proc_sym_table_.cend() && var_it != data_var_sym_table_.cend();
 	ASSERT_WITH_CLEANUP(!multiple_definition_cond, "multiple definition of %s", value);
-	// make sure value does reside at least in one of the symbol tables
-	ASSERT_WITH_CLEANUP(multiple_definition_cond, "unresolved symbol %s", value);
+		
 
 	if (label_it != proc_sym_table_.cend()) {
 		return proc_sym_table_[value];
 	}
-	else {
+	else if (var_it != data_var_sym_table_.cend()) {
 		return data_var_sym_table_[value];
+	}
+	else {
+		fprintf(stderr, "unresolved symbol %s", value);
+		cleanup();
+		exit(-1);
 	}
 }
 
@@ -127,8 +142,9 @@ uint32_t Assembler::fetchMemoryOperand(uint32_t &pos, uint32_t len) {
 uint32_t Assembler::fetchImmediateOperand(uint32_t& pos, uint32_t len) {
 	eatWhitespaces(pos, len);
 	std::string value;
-	while (pos < len && asm_source_[pos] != '\n') {
+	while (pos < len && !isspace(asm_source_[pos])) {
 		value += asm_source_[pos];
+		pos++;
 	}
 	
 	return static_cast<uint32_t>(atoi(value.c_str()));

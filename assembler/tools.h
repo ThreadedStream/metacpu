@@ -4,7 +4,7 @@
 
 namespace tools {
     static char* cppStyleLoadFileIntoMemory(const char *const path) {
-        std::ifstream stream(path, std::ios::in | std::ios::app);
+		std::ifstream stream(path, std::ios::in | std::ios::app);
         if (!stream) {
             fputs("[[error]] make sure that path to the file is correct\n", stderr);
             return nullptr;
@@ -59,4 +59,60 @@ namespace tools {
 
         return buffer;
     }
+
+	// TOTEST(threadedstream)
+	static bool cppStyleWriteToFile(const char* const path, const std::string& contents) {
+		std::ofstream stream(path, std::ios::app | std::ios::out);
+		
+		if (!stream) {
+			fputs("[[error]] make sure that path to the file is correct\n", stderr);
+			return false;
+		}
+
+		// writing preamble
+		const char preamble[] = "metasm v_1_0";
+		stream.write(preamble, sizeof(preamble));
+		if (!stream) {
+			fputs("[[error]] failed to write preamble to a file\n", stderr);
+			return false;
+		}
+
+		// writing content buffer
+		const auto len = contents.size();
+		stream.write(contents.c_str(), len);
+		if (!stream) {
+			fputs("[[error]] failed to put contents into a file\n", stderr);
+			return false;
+		}
+
+		// disposing of the held resource
+		stream.close();
+		return true;
+	}
+
+	// TODO(threadedstream): test transfer of an ownership against "const char* const"
+	static bool cStyleWriteToFile(const char* const path, const std::vector<uint16_t>& opcodes) {
+		FILE* stream = fopen(path, "wb");
+		if (!stream) {
+			fputs("[[error]] make sure that path to the file is correct\n", stderr);
+			return false;
+		}
+			
+		// writing preamble
+		const char preamble[] = "metasm v_1_0";
+		if (!fwrite(preamble, 1, sizeof(preamble), stream)) {
+			fputs("[[error]] failed to write preamble to a file\n", stderr);
+			return false;
+		}
+		
+		const auto len = opcodes.size();
+		if (!fwrite(opcodes.data(), sizeof(uint16_t), len, stream)) {
+			fputs("[[error]] failed to put contents into a file\n", stderr);
+			return false;
+		}
+
+		fclose(stream);
+		
+		return true;
+	}
 }

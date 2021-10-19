@@ -60,15 +60,14 @@ void resolveLabels(char *src) {
 #endif
 
 int main(int argc, const char *argv[]) {
-
     Assembler assembler("D:\\toys\\metacpu\\assembler\\samples\\sample.asm");
 
     assembler.generateSymbolTable();
-	
-	//assembleInstruction("leave", 0x1, 0xFF);
 
-	const auto proc_sym_table = assembler.procSymTable();
-	const auto var_sym_table = assembler.dataVarSymTable();
+	assembler.assemble();
+
+	const auto &proc_sym_table = assembler.procSymTable();
+	const auto &var_sym_table = assembler.dataVarSymTable();
 	
     return 0;
 }

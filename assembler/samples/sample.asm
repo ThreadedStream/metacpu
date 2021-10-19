@@ -1,9 +1,9 @@
 .start:
 	clac
-	addi 6
+	addi 200
 
 .loop:
-	subi 1
+	sub x
 	bnz loop	
 	ucb end
 
