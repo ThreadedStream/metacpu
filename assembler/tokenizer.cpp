@@ -100,7 +100,7 @@ Token *Tokenizer::operand(const char *src, int32_t src_len, int32_t &pos) {
         else if (isalpha(curr_c))
             return Tokenizer::label(src, src_len, pos);
         else
-			token += curr_c;
+            token += curr_c;
     }
 
     return nullptr;

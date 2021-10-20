@@ -12,7 +12,7 @@
 
 BEGINDATA
 {
-    x = 45
+    x = 50
     y = 66
 	z = 0
 }

@@ -103,7 +103,7 @@ void Assembler::assemble() {
 		}
 	}
 	
-	const auto success = tools::cStyleWriteToFile("D:\\toys\\metacpu\\assembler\\samples\\sample.bin", machine_code_16_bit);
+	const auto success = tools::cStyleWriteToFile("D:/toys/metacpu/assembler/samples/sample.bin", machine_code_16_bit);
 	ASSERT_WITH_CLEANUP(success, "");
 }
 

@@ -29,7 +29,7 @@ typedef Token (*HandlerFuncPtr)(const char *src, int32_t src_len, int32_t &pos);
 std::map<std::string, HandlerFuncPtr> instruction_handlers = {
         {"addi", &Tokenizer::addi},
         {"subi", &Tokenizer::subi},
-        {"add", &Tokenizer::add},
+        {"add",  &Tokenizer::add},
         {"clac", &Tokenizer::clac},
 };
 
@@ -60,14 +60,14 @@ void resolveLabels(char *src) {
 #endif
 
 int main(int argc, const char *argv[]) {
-    Assembler assembler("D:\\toys\\metacpu\\assembler\\samples\\sample.asm");
+    Assembler assembler("D:/toys/metacpu/assembler/samples/sample.asm");
 
     assembler.generateSymbolTable();
 
-	assembler.assemble();
+    assembler.assemble();
 
-	const auto &proc_sym_table = assembler.procSymTable();
-	const auto &var_sym_table = assembler.dataVarSymTable();
-	
+    const auto &proc_sym_table = assembler.procSymTable();
+    const auto &var_sym_table = assembler.dataVarSymTable();
+
     return 0;
 }
