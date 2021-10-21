@@ -1,6 +1,6 @@
 .start:
 	clac
-	addi 10
+	addi 2
 
 .print_acc:
 	subi 1

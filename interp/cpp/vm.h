@@ -99,7 +99,7 @@ static bool loadMachineCodeIntoMemory(const char *path, uint16_t **buffer_ptr, i
 struct vm {
     vm() : acc{0}, pc{0} {}
 
-    uint8_t acc;
+    int8_t acc;
     uint16_t *memory;
     uint8_t pc;
 	uint8_t flags; 

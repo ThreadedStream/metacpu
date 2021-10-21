@@ -74,10 +74,9 @@ int main(int argc, const char *argv[]) {
 	}
 	else {
 		std::string source = argv[1];
-		const auto idx = source.find_last_of(".");
+		const auto idx = source.find_first_of(".");
 		if (idx != std::string::npos) {
-			output_file = source.substr(idx) + ".bin";
-			fprintf(stdout, "%s", output_file.c_str());
+			output_file = source.substr(0, idx) + ".bin";
 		}
 		else {
 			output_file = "main.bin";

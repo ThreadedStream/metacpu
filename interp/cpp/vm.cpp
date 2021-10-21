@@ -152,17 +152,17 @@ void Interpreter::cmpi(uint8_t value) {
 }
 
 void Interpreter::out() {
-	fprintf(stdout, "%d", vm_->acc);
+	fprintf(stdout, "%d\n", vm_->acc);
 }
 
 void Interpreter::big(uint8_t addr) {
-	if (!is_sf_set(vm_->flags)) {
+	if (!is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
 		vm_->pc = addr - 1;
 	}
 }
 
 void Interpreter::bil(uint8_t addr) {
-	if (is_sf_set(vm_->flags)) {
+	if (is_sf_set(vm_->flags) && !is_zf_set(vm_->flags){
 		vm_->pc = addr - 1;
 	}
 }

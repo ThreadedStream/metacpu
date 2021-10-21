@@ -87,20 +87,17 @@ void Assembler::assemble(const std::string& output_file) {
 				pos++;
 				if (it->second == InstructionMode::NONE) {
 					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0);
-					//machine_code += ' ';
 					token = "";
 				}
 				else if (it->second == InstructionMode::IMMEDIATE) {
 					const auto value = fetchImmediateOperand(pos, len);
 					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), value);
-					//machine_code += ' ';
 					token = "";
 				}
 				else {
 					// Memory instruction mode
 					const auto value = fetchMemoryOperand(pos, len);
 					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), value);
-					//machine_code += ' ';
 					token = "";
 				}
 				pc++;

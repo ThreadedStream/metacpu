@@ -1,5 +1,6 @@
-#include "vm.h"
+#define _CRT_SECURE_NO_WARNINGS 1
 
+#include "vm.h"
 
 
 int main(int argc, const char* argv[]) {
