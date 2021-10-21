@@ -15,16 +15,21 @@ enum class InstructionMode : unsigned {
 
 // TODO(threadedstream): needs to be changed to something less painful to query
 static std::unordered_map<std::string, InstructionMode> instructions = {
-        {"addi",  InstructionMode::IMMEDIATE}, // add immediate
-        {"subi",  InstructionMode::IMMEDIATE}, // sub immediate
-        {"add",   InstructionMode::MEMORY}, // access memory, add contents
-        {"sub",   InstructionMode::MEMORY}, // access memory, sub contents
-        {"clac",  InstructionMode::NONE}, // clear acc
-        {"str",   InstructionMode::MEMORY}, // store into memory
-        {"bz",    InstructionMode::MEMORY}, // branch if zero
-        {"bnz",   InstructionMode::MEMORY}, // branch if not zero
-        {"ucb",   InstructionMode::MEMORY}, // unconditional branch
-        {"leave", InstructionMode::NONE}, // stop execution of a program
+        {"addi",  InstructionMode::IMMEDIATE}, 
+        {"subi",  InstructionMode::IMMEDIATE}, 
+        {"add",   InstructionMode::MEMORY}, 
+        {"sub",   InstructionMode::MEMORY}, 
+        {"clac",  InstructionMode::NONE}, 
+        {"str",   InstructionMode::MEMORY},
+        {"bz",    InstructionMode::MEMORY},
+        {"bnz",   InstructionMode::MEMORY},
+        {"ucb",   InstructionMode::MEMORY},
+		{"leave", InstructionMode::NONE},
+		{"cmpi",  InstructionMode::IMMEDIATE},
+		{"cmp",   InstructionMode::MEMORY},
+		{"out",	  InstructionMode::NONE},
+		{"big",   InstructionMode::MEMORY},
+		{"bil",   InstructionMode::MEMORY}
 };
 
 enum class TokenType : unsigned {

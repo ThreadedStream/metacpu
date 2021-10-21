@@ -62,7 +62,7 @@ void Assembler::generateSymbolTable() {
     }
 }
 
-void Assembler::assemble() {	
+void Assembler::assemble(const std::string& output_file) {
 	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
 	uint8_t pc{ 0 };
 	const auto len = strlen(asm_source_);
@@ -108,7 +108,7 @@ void Assembler::assemble() {
 		}
 	}
 	
-	const auto success = tools::cStyleWriteToFile("D:/toys/metacpu/assembler/samples/sample.bin", address_space_);
+	const auto success = tools::cStyleWriteToFile(output_file.c_str(), address_space_);
 	ASSERT_WITH_CLEANUP(success, "");
 }
 

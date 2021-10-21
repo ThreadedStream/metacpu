@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include <map>
 #include <cstdint>
 #include <fstream>
@@ -59,12 +61,31 @@ void resolveLabels(char *src) {
 }
 #endif
 
+
 int main(int argc, const char *argv[]) {
-    Assembler assembler("D:/toys/metacpu/assembler/samples/sample.asm");
+	if (argc < 2) {
+		fputs("nothing to assemble", stderr);
+		exit(-1);
+	}
+	
+	std::string output_file;
+	if (argc > 3) {
+		output_file = argv[3];
+	}
+	else {
+		std::string source = argv[1];
+		const auto idx = source.find_last_of(".");
+		if (idx != std::string::npos) {
+			output_file = source.substr(idx) + ".bin";
+			fprintf(stdout, "%s", output_file.c_str());
+		}
+		else {
+			output_file = "main.bin";
+		}
+	}
+	
 
-    assembler.generateSymbolTable();
-
-    assembler.assemble();
+    Assembler assembler(argv[1], output_file);
 
     const auto &proc_sym_table = assembler.procSymTable();
     const auto &var_sym_table = assembler.dataVarSymTable();

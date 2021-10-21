@@ -11,11 +11,23 @@
 // Cpp-includes
 #include <string>
 
+// some constant values
 constexpr uint16_t preamble_size = 12;
 constexpr uint8_t memory_bank_size = 0xFF;
 
+constexpr uint8_t zero_flag_mask = 0x01;
+constexpr uint8_t sign_flag_mask = 0x02;
 
 constexpr const char expected_preamble[preamble_size + 1] = "metasm v_1_0";
+
+// lambdas
+constexpr auto is_zf_set = [](const uint8_t flags) -> bool{
+	return flags & zero_flag_mask;
+};
+
+constexpr auto is_sf_set = [](const uint8_t flags) -> bool {
+	return flags & sign_flag_mask;
+};
 
 enum {
     FAILED_TO_INIT_STREAM,
@@ -74,21 +86,37 @@ static bool loadMachineCodeIntoMemory(const char *path, uint16_t **buffer_ptr, i
     return true;
 }
 
+// acc - 16-bit accumulator register
+// memory - 16-bit data memory with 256 available entries
+// pc - program counter
+// flags - status flags, list of used flags
+// note: starting from lsb (least significant bit)
+//  ======================
+// |zf(zero flag) - 1 bit |
+// |sf(sign flag) - 2 bit |
+//  ======================
 
 struct vm {
     vm() : acc{0}, pc{0} {}
 
-    uint16_t acc;
+    uint8_t acc;
     uint16_t *memory;
     uint8_t pc;
-    bool zf;
+	uint8_t flags; 
 };
 
 
 class Interpreter final {
 public:
 
-    Interpreter() = default;
+	explicit Interpreter(const std::string& path) {
+		initializeVm(path);
+		simulate();
+	}
+	
+	~Interpreter() { destroyVm(); }
+
+private:
 
     bool initializeVm(const std::string &path);
 
@@ -100,8 +128,6 @@ public:
         free(vm_);
         vm_ = nullptr;
     }
-
-    ~Interpreter() { destroyVm(); }
 
 private:
     void addi(uint8_t value);
@@ -121,6 +147,16 @@ private:
     void ucb(uint8_t addr);
 
     void str(uint8_t addr);
+
+	void cmp(uint8_t addr);
+
+	void cmpi(uint8_t value);
+	
+	void out();
+
+	void big(uint8_t addr);
+	
+	void bil(uint8_t addr);
 
 private:
     vm *vm_;

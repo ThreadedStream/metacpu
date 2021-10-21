@@ -15,5 +15,10 @@ enum {
     BZ = 0x6000,
     UCB = 0x7000,
     STR = 0x8000,
-    LEAVE = 0x9000
+    LEAVE = 0x9000,
+	CMP  = 0xA000,
+	CMPI = 0xB000,
+	OUT  = 0xC000,
+	BIG  = 0xD000,
+	BIL  = 0xE000
 };

@@ -1,19 +1,20 @@
 .start:
 	clac
-	addi 200
+	addi 10
 
-.loop:
-	sub x
-	bnz loop	
+.print_acc:
+	subi 1
+	out 
+	cmpi 0
+	big print_acc
 	ucb end
 
 .end:
-	out x
 	leave
 
 BEGINDATA
 {
-    x = 50
+    x = 0
     y = 66
 	z = 0
 }

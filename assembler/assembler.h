@@ -10,11 +10,14 @@ constexpr uint8_t address_space_size = 0xFF;
 
 class Assembler {
 public:
-    explicit Assembler(const char *path) {
+    explicit Assembler(const char *path, const std::string &output_file) {
         asm_source_ = tools::cStyleLoadFileIntoMemory(path);
         assert(asm_source_ != nullptr && "asm_source_ is nullptr");
 		address_space_.resize(address_space_size);
 		data_section_ptr = 0xF0;
+		
+		generateSymbolTable();
+		assemble(output_file);
     }
 
     ~Assembler() {
@@ -24,7 +27,7 @@ public:
 
     void generateSymbolTable();
 
-    void assemble();
+    void assemble(const std::string& output_file);
 
 public:
     [[nodiscard]] constexpr inline auto &dataVarSymTable() noexcept { return data_var_sym_table_; }

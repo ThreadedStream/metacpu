@@ -30,10 +30,11 @@ static std::unordered_map<std::string, uint8_t> opcodes = {
         {"ucb",   0x7},
         {"str",   0x8},
         {"leave", 0x9},
-		{"cmp", 0xA},
-		{"out", 0xB},
-		{"big", 0xC},
-		{"bil", 0xD}
+		{"cmp",   0xA},
+		{"cmpi",  0xB},
+		{"out",   0xC},
+		{"big",   0xD},
+		{"bil",   0xE}
 };
 
 
