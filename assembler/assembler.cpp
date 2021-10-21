@@ -15,9 +15,13 @@ if (!(cond)) { \
 		exit(-1); \
 } 
 
+// 0 -> 0xFF
+// data section -> [0xF0, 0xFF]
+
 
 void Assembler::generateSymbolTable() {
 	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
+	uint8_t pc{ 0 };
 	const auto len = strlen(asm_source_);
 	std::string token;
 	char curr_c;
@@ -28,7 +32,7 @@ void Assembler::generateSymbolTable() {
 			pos++;
 			const auto label_name = getLabelName(pos, len);
 			// store that into symbol table
-			proc_sym_table_.emplace(label_name, pc_);
+			proc_sym_table_.emplace(label_name, pc);
 		
 		} else if (isascii(curr_c) && isspace(curr_c)) {
             continue;
@@ -39,7 +43,7 @@ void Assembler::generateSymbolTable() {
 			// increment pc in case of encountered instruction
 			if (it != instructions.cend() && pos+1 < len && isspace(asm_source_[pos+1])) {
                 fprintf(stdout, "Token: %s, Mode: %d\n", token.c_str(), it->second);
-                pc_++;
+                pc++;
                 nextLine(pos, len);
                 token = "";
 			}
@@ -59,10 +63,8 @@ void Assembler::generateSymbolTable() {
 }
 
 void Assembler::assemble() {	
-	std::string machine_code;
-
-	std::vector<uint16_t> machine_code_16_bit;
 	assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
+	uint8_t pc{ 0 };
 	const auto len = strlen(asm_source_);
 	std::string token;
 	char curr_c;
@@ -77,33 +79,36 @@ void Assembler::assemble() {
 		}
 		else {
 			token += curr_c;
-										
+			// TODO(threadedstream): At that point, i don't think we need instruction mode anymore.
+			// I'll probably elide it and make more room for instructions, thus allowing up to 255 entries in my 
+			// yet poor instruction set. 
 			const auto it = instructions.find(token);
 			if (it != instructions.cend() && pos + 1 < len && isspace(asm_source_[pos + 1])) {
 				pos++;
 				if (it->second == InstructionMode::NONE) {
-					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0));
+					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), 0x0);
 					//machine_code += ' ';
 					token = "";
 				}
 				else if (it->second == InstructionMode::IMMEDIATE) {
 					const auto value = fetchImmediateOperand(pos, len);
-					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), value));
+					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), value);
 					//machine_code += ' ';
 					token = "";
 				}
 				else {
 					// Memory instruction mode
 					const auto value = fetchMemoryOperand(pos, len);
-					machine_code_16_bit.push_back(assembleInstruction(token, static_cast<uint16_t>(it->second), value));
+					address_space_[pc] = assembleInstruction(token, static_cast<uint16_t>(it->second), value);
 					//machine_code += ' ';
 					token = "";
 				}
+				pc++;
 			}
 		}
 	}
 	
-	const auto success = tools::cStyleWriteToFile("D:/toys/metacpu/assembler/samples/sample.bin", machine_code_16_bit);
+	const auto success = tools::cStyleWriteToFile("D:/toys/metacpu/assembler/samples/sample.bin", address_space_);
 	ASSERT_WITH_CLEANUP(success, "");
 }
 
@@ -179,7 +184,9 @@ void Assembler::parseVarBlock(uint32_t &pos, uint32_t len) {
 		}
 
 		const auto value_int = atoi(value.c_str());
-		data_var_sym_table_[identifier] = value_int;
+		ASSERT_WITH_CLEANUP(data_section_ptr < 0xFF, "data section overflow");
+		data_var_sym_table_[identifier] = data_section_ptr++;
+		address_space_[data_section_ptr - 1] = value_int;
 		identifier = ""; value = "";
 		eatWhitespaces(pos, len);
 	}

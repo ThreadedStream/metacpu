@@ -8,6 +8,7 @@
 	ucb end
 
 .end:
+	out x
 	leave
 
 BEGINDATA

@@ -6,11 +6,15 @@
 
 #include "tools.h"
 
+constexpr uint8_t address_space_size = 0xFF;
+
 class Assembler {
 public:
-    Assembler(const char *path) {
+    explicit Assembler(const char *path) {
         asm_source_ = tools::cStyleLoadFileIntoMemory(path);
         assert(asm_source_ != nullptr && "asm_source_ is nullptr");
+		address_space_.resize(address_space_size);
+		data_section_ptr = 0xF0;
     }
 
     ~Assembler() {
@@ -58,8 +62,9 @@ private:
     void expectSymbol(uint8_t symbol, uint32_t &pos, uint32_t len);
 
 private:
-    uint32_t pc_{0};
-    std::unordered_map<std::string, uint32_t> proc_sym_table_;
+	uint8_t data_section_ptr;
+	std::vector<uint16_t> address_space_;
+	std::unordered_map<std::string, uint32_t> proc_sym_table_;
     std::unordered_map<std::string, uint32_t> data_var_sym_table_;
     char *asm_source_;
 };

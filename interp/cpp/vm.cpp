@@ -75,13 +75,10 @@ void Interpreter::addi(uint8_t value) {
     SET_UNSET_ZF(vm_)
 }
 
-void Interpreter::add(uint8_t value) {
-    // Currently, addi and add do not differ semantically -- in fact, they
-    // perform exactly the same operation. Later on, add will have accessed
-    // a value residing in a specific address in memory. Doing so
-    // allows one to write some contents to that address whenever one needs to.
+void Interpreter::add(uint8_t addr) {
+	const auto value = vm_->memory[addr];
     vm_->acc += value;
-    SET_UNSET_ZF(vm_)
+	SET_UNSET_ZF(vm_)
 }
 
 void Interpreter::subi(uint8_t value) {
@@ -89,7 +86,8 @@ void Interpreter::subi(uint8_t value) {
     SET_UNSET_ZF(vm_)
 }
 
-void Interpreter::sub(uint8_t value) {
+void Interpreter::sub(uint8_t addr) {
+	const auto value = vm_->memory[addr];
     vm_->acc -= value;
     SET_UNSET_ZF(vm_)
 }
@@ -102,6 +100,7 @@ void Interpreter::clac() {
 
 void Interpreter::bnz(uint8_t addr) {
     if (!vm_->zf) {
+		// assign addr - 1, since pc is incremented each loop
         vm_->pc = addr - 1;
     }
 }

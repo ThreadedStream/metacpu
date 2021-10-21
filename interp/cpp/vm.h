@@ -106,11 +106,11 @@ public:
 private:
     void addi(uint8_t value);
 
-    void add(uint8_t value);
+    void add(uint8_t addr);
 
     void subi(uint8_t value);
 
-    void sub(uint8_t value);
+    void sub(uint8_t addr);
 
     void clac();
 
