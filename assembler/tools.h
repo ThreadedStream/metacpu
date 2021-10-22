@@ -23,7 +23,7 @@ namespace tools {
 
         stream.read(src, file_size);
         if (!stream) {
-            fprintf(stderr, "[[error]] failed to read from a file, only %lld character could be read\n",
+            fprintf(stderr, "[[error]] failed to read from a file, only %ld character could be read\n",
                     stream.gcount());
             return nullptr;
         }
@@ -53,7 +53,7 @@ namespace tools {
 
         const auto read = fread(buffer, sizeof(char), len, stream);
         if (read != len) {
-            fprintf(stderr, "[[error]] failed to read from a file, left to read %lld characters", len - read);
+            fprintf(stderr, "[[error]] failed to read from a file, left to read %ld characters", len - read);
             return nullptr;
         }
 

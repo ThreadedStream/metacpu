@@ -152,7 +152,9 @@ private:
 
 	void cmpi(uint8_t value);
 	
-	void out();
+	void outd();
+
+    void outb();
 
 	void big(uint8_t addr);
 	

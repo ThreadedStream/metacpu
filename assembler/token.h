@@ -15,21 +15,22 @@ enum class InstructionMode : unsigned {
 
 // TODO(threadedstream): needs to be changed to something less painful to query
 static std::unordered_map<std::string, InstructionMode> instructions = {
-        {"addi",  InstructionMode::IMMEDIATE}, 
-        {"subi",  InstructionMode::IMMEDIATE}, 
-        {"add",   InstructionMode::MEMORY}, 
-        {"sub",   InstructionMode::MEMORY}, 
-        {"clac",  InstructionMode::NONE}, 
+        {"addi",  InstructionMode::IMMEDIATE},
+        {"subi",  InstructionMode::IMMEDIATE},
+        {"add",   InstructionMode::MEMORY},
+        {"sub",   InstructionMode::MEMORY},
+        {"clac",  InstructionMode::NONE},
         {"str",   InstructionMode::MEMORY},
         {"bz",    InstructionMode::MEMORY},
         {"bnz",   InstructionMode::MEMORY},
         {"ucb",   InstructionMode::MEMORY},
-		{"leave", InstructionMode::NONE},
-		{"cmpi",  InstructionMode::IMMEDIATE},
-		{"cmp",   InstructionMode::MEMORY},
-		{"out",	  InstructionMode::NONE},
-		{"big",   InstructionMode::MEMORY},
-		{"bil",   InstructionMode::MEMORY}
+        {"leave", InstructionMode::NONE},
+        {"cmpi",  InstructionMode::IMMEDIATE},
+        {"cmp",   InstructionMode::MEMORY},
+        {"outd",  InstructionMode::NONE},
+        {"big",   InstructionMode::MEMORY},
+        {"bil",   InstructionMode::MEMORY},
+        {"outb",  InstructionMode::NONE},
 };
 
 enum class TokenType : unsigned {

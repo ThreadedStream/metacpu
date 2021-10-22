@@ -3,7 +3,7 @@
 
 // updates state of the flags by first clearing off an old state, and then 
 // setting a new one.
-#define SET_FLAGS vm_->flags = (vm_->flags >> 2) | ((vm_->acc == 0 ? 1 : 0) | ((vm_->acc < 0 ? 1 : 0) << 1)); 
+#define SET_FLAGS vm_->flags = (vm_->flags >> 2) | ((vm_->acc == 0 ? 1 : 0) | ((vm_->acc < 0 ? 1 : 0) << 1));
 
 
 bool Interpreter::initializeVm(const std::string &path) {
@@ -62,21 +62,24 @@ void Interpreter::simulate() {
             case STR:
                 str(instr & value_mask);
                 break;
-			case CMP:
-				cmp(instr & value_mask);
-				break;
-			case CMPI:
-				cmpi(instr & value_mask);
-				break;
-			case OUT:
-				out();
-				break;
-			case BIG:
-				big(instr & value_mask);
-				break;
-			case BIL:
-				bil(instr & value_mask);
-				break;
+            case CMP:
+                cmp(instr & value_mask);
+                break;
+            case CMPI:
+                cmpi(instr & value_mask);
+                break;
+            case OUTD:
+                outd();
+                break;
+            case OUTB:
+                outb();
+                break;
+            case BIG:
+                big(instr & value_mask);
+                break;
+            case BIL:
+                bil(instr & value_mask);
+                break;
             default:
                 printf("unknown instruction %d", opcode);
                 break;
@@ -85,6 +88,7 @@ void Interpreter::simulate() {
     }
 
     printf("leave\n");
+
 }
 
 void Interpreter::addi(uint8_t value) {
@@ -93,32 +97,32 @@ void Interpreter::addi(uint8_t value) {
 }
 
 void Interpreter::add(uint8_t addr) {
-	const auto value = vm_->memory[addr];
+    const auto value = vm_->memory[addr];
     vm_->acc += value;
-	SET_FLAGS
+    SET_FLAGS
 }
 
 void Interpreter::subi(uint8_t value) {
     vm_->acc -= value;
-	SET_FLAGS
+    SET_FLAGS
 }
 
 void Interpreter::sub(uint8_t addr) {
-	const auto value = vm_->memory[addr];
+    const auto value = vm_->memory[addr];
     vm_->acc -= value;
-	SET_FLAGS
+    SET_FLAGS
 }
 
 void Interpreter::clac() {
     // Zero out accumulator
     vm_->acc ^= vm_->acc;
-	// set zero flag
+    // set zero flag
     vm_->flags |= 0x1;
 }
 
 void Interpreter::bnz(uint8_t addr) {
     if (!is_zf_set(vm_->flags)) {
-		// assign addr - 1, since pc is incremented each loop
+        // assign addr - 1, since pc is incremented each loop
         vm_->pc = addr - 1;
     }
 }
@@ -138,31 +142,35 @@ void Interpreter::str(uint8_t addr) {
 }
 
 void Interpreter::cmp(uint8_t addr) {
-	const auto temp = vm_->acc;
-	vm_->acc -= vm_->memory[addr];
-	SET_FLAGS
-	vm_->acc = temp;
+    const auto temp = vm_->acc;
+    vm_->acc -= vm_->memory[addr];
+    SET_FLAGS
+    vm_->acc = temp;
 }
 
 void Interpreter::cmpi(uint8_t value) {
-	const auto temp = vm_->acc;
-	vm_->acc -= value;
-	SET_FLAGS
-	vm_->acc = temp;
+    const auto temp = vm_->acc;
+    vm_->acc -= value;
+    SET_FLAGS
+    vm_->acc = temp;
 }
 
-void Interpreter::out() {
-	fprintf(stdout, "%d\n", vm_->acc);
+void Interpreter::outd() {
+    fprintf(stdout, "%d", vm_->acc);
+}
+
+void Interpreter::outb() {
+    fprintf(stdout, "%c", vm_->acc);
 }
 
 void Interpreter::big(uint8_t addr) {
-	if (!is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
-		vm_->pc = addr - 1;
-	}
+    if (!is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
+        vm_->pc = addr - 1;
+    }
 }
 
 void Interpreter::bil(uint8_t addr) {
-	if (is_sf_set(vm_->flags) && !is_zf_set(vm_->flags){
-		vm_->pc = addr - 1;
-	}
+    if (is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
+        vm_->pc = addr - 1;
+    }
 }

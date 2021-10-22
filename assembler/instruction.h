@@ -19,27 +19,31 @@
 // big - 0xC (branch-if-greater)
 // bil - 0xD (branch-if-less)
 
+
 static std::unordered_map<std::string, uint8_t> opcodes = {
-        {"addi",  0x0},
-        {"add",   0x1},
-        {"subi",  0x2},
-        {"sub",   0x3},
-        {"clac",  0x4},
-        {"bnz",   0x5},
-        {"bz",    0x6},
-        {"ucb",   0x7},
-        {"str",   0x8},
-        {"leave", 0x9},
-		{"cmp",   0xA},
-		{"cmpi",  0xB},
-		{"out",   0xC},
-		{"big",   0xD},
-		{"bil",   0xE}
+        {"addi",  0x00},
+        {"add",   0x01},
+        {"subi",  0x02},
+        {"sub",   0x03},
+        {"clac",  0x04},
+        {"bnz",   0x05},
+        {"bz",    0x06},
+        {"ucb",   0x07},
+        {"str",   0x08},
+        {"leave", 0x09},
+        {"cmp",   0x0A},
+        {"cmpi",  0x0B},
+        {"outd",  0x0C},
+        {"big",   0x0D},
+        {"bil",   0x0E},
+        {"outb",  0x0F},
+
 };
 
 
-static inline uint16_t assembleInstruction(const std::string &instruction, const uint16_t mode, const uint8_t value) {
-    const uint16_t opcode = (opcodes[instruction]) << 12;
+static inline uint16_t assembleInstruction(const std::string &instruction, const uint8_t value) {
+    // 0x00FF
+    const uint16_t opcode = (opcodes[instruction]) << 8;
 
-    return opcode | mode << 8 | value;
+    return opcode | value;
 }

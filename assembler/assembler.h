@@ -3,8 +3,38 @@
 #include <cstdint>
 #include <cstdlib>
 #include <unordered_map>
+#include <cassert>
 
 #include "tools.h"
+
+#if defined(_MSC_VER)
+    #define ASSERT_WITH_CLEANUP(cond, fmt, ...) \
+    if (!(cond)) { \
+            fprintf(stderr, fmt, __VA_ARGS__); \
+            cleanup(); \
+            exit(-1); \
+    }
+#elif defined(__GNUC__)
+#define ASSERT_WITH_CLEANUP(cond, fmt, ...) \
+    if (!(cond)) {                              \
+        fprintf(stderr, #__VA_ARGS__);                 \
+        cleanup();                                \
+        exit(-1);   \
+    }
+
+//#define FIRST(...) FIRST_HELPER(__VA_ARGS__, throwaway)
+//#define FIRST_HELPER(first, ...) first
+//
+//#define REST(...) REST_HELPER(NUM(__VA_ARGS__), __VA_ARGS__)
+//#define REST_HELPER(qty, ...) REST_HELPER2(qty, __VA_ARGS__)
+//#define REST_HELPER2(qty, ...) REST_HELPER_##qty(__VA_ARGS__)
+//#define REST_HELPER_ONE(first)
+//#define REST_HELPER_TWOORMORE(first, ...) , __VA_ARGS__
+//#define NUM(...) \
+//    SELECT_10TH(__VA_ARGS__, TWOORMORE, TWOORMORE, TWOORMORE, TWOORMORE, \
+//        TWOORMORE, TWOORMORE, TWOORMORE, TWOORMORE, ONE, throwaway)
+//#define SELECT_10TH(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, ...) a10
+#endif
 
 constexpr uint8_t address_space_size = 0xFF;
 
