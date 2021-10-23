@@ -5,7 +5,6 @@
 #include <vector>
 #include <cstring>
 
-#include "tokenizer.h"
 #include "assembler.h"
 
 // Phases of a metacpu assembler

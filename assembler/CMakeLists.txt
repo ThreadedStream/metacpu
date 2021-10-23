@@ -3,12 +3,9 @@ project(metacpu_asm)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(metacpu_asm
-        assembler.h
-        assembler.cpp
-        tokenizer.h
-        tools.h
-        token.h
-        tokenizer.cpp
-        main.cpp
-)
+set(HEADER_FILES assembler.h tools.h token.h bin_tree.h)
+set(SOURCES assembler.cpp main.cpp)
+
+add_executable(metacpu_asm ${HEADER_FILES} ${SOURCES})
+
+target_include_directories(metacpu_asm PUBLIC ${CMAKE_SOURCE_DIR}/common)
