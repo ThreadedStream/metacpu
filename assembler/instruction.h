@@ -37,7 +37,7 @@ static std::unordered_map<std::string, uint8_t> opcodes = {
         {"big",   0x0D},
         {"bil",   0x0E},
         {"outb",  0x0F},
-
+        {"ret",   0x10},
 };
 
 

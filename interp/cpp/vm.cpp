@@ -120,6 +120,9 @@ void Interpreter::clac() {
     vm_->flags |= 0x1;
 }
 
+
+// TODO(threadedstream): push pc onto the stack as a return address
+// The same goes for every jump instruction
 void Interpreter::bnz(uint8_t addr) {
     if (!is_zf_set(vm_->flags)) {
         // assign addr - 1, since pc is incremented each loop

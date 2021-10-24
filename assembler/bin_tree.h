@@ -44,22 +44,33 @@ bool inline insert(Node *&root, const char *name, const uint8_t value) {
     // TODO(threadedstream): node's children do not update, inasmuch as the latter do not
     // possess any address (i.e nullptr), which makes it quite difficult to solve this problem
     // iteratively. However, it perfectly works in case with recursion.
-    auto temp = root;
-
-    while (temp) {
-        if (name > temp->name) {
-            temp = temp->right;
-        } else {
-            temp = temp->left;
-        }
-    }
-
-    temp = allocateNode(name, value);
-    if (!temp){
+    auto n = allocateNode(name, value);
+    if (!n) {
         fprintf(stderr, errors[FAILED_TO_ALLOCATE_MEMORY]);
         return false;
     }
 
+    auto temp = root;
+    while (temp) {
+        if (name > temp->name) {
+            temp = n;
+            break;
+        } else if (name < temp->name){
+            temp->left = n;
+        } else {
+        }
+    }
+
+
+//    while (temp) {
+//        if (name > temp->name) {
+//            temp = temp->right;
+//        } else {
+//            temp = temp->left;
+//        }
+//    }
+
+    temp = n;
     return true;
 }
 
