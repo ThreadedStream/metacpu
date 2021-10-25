@@ -2,33 +2,37 @@
 #include <cassert>
 #include <cstring>
 
-static void test_insert() {
+static void testInsert() {
     Node *root = nullptr;
-    const char *name = "pwn_government";
+    const char *name = "root";
     const uint8_t value = 0x69;
-    auto success = insert(root, name, value);
-    assert(success && "failed to insert a root");
+    root = insert(root, name, value);
+    assert(root && "failed to insert a root");
     assert(strcmp(root->name, name) == 0 && "root->name and name do not match");
     assert(root->value == value && "root->value and value do not match");
 
-
-    const char* kid1_name = "print";
+    const char* kid1_name = "kid1";
     const uint8_t kid1_value = 0x70;
-    success = insert(root, kid1_name, kid1_value);
-    assert(success && "failed to insert a first kid");
+    auto node = insert(root, kid1_name, kid1_value);
     // sanity check that root's address has been properly restored
-    assert(strcmp(root->name, name) == 0 && "root->name and name do not match");
-    assert(root->value == value && "root->value and value do not match");
+    assert(node && "failed to insert a node into the tree");
 
-    free(root->right);
-    root->right = nullptr;
-    free(root->left);
-    root->left = nullptr;
+    const char* kid2_name = "kid2";
+    const uint8_t kid2_value = 0x71;
+    auto node1 = insert(root, kid2_name, kid2_value);
+    assert(node1 && "failed to insert a node into the tree");
+
+    Node* pred;
+    findPred(root, pred, "")
+
+    free(node1);
+    free(node);
     free(root);
     root = nullptr;
+    node = nullptr;
+    node1 = nullptr;
 }
 
-
 int main(int argc, const char* argv[]) {
-    test_insert();
+    testInsert();
 }

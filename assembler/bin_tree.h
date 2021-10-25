@@ -23,55 +23,63 @@ static inline Node *allocateNode(const char *name, const uint8_t value) {
     return ptr;
 }
 
-bool inline insert(Node *&root, const char *name, const uint8_t value) {
-    if (!root) {
-        root = allocateNode(name, value);
-        if (!root) {
-            fprintf(stderr, errors[FAILED_TO_ALLOCATE_MEMORY]);
-            return false;
-        }
-        return true;
-    }
-
-    // try this iteratively
-//    if (name > root->name) {
-//        return insert(root->right, name, value);
-//    } else{
-//        return insert(root->left, name, value);
-//    }
-
-
-    // TODO(threadedstream): node's children do not update, inasmuch as the latter do not
-    // possess any address (i.e nullptr), which makes it quite difficult to solve this problem
-    // iteratively. However, it perfectly works in case with recursion.
+inline Node* insert(Node *&root, const char *name, const uint8_t value) {
     auto n = allocateNode(name, value);
     if (!n) {
-        fprintf(stderr, errors[FAILED_TO_ALLOCATE_MEMORY]);
-        return false;
+        fputs(errors[FAILED_TO_ALLOCATE_MEMORY], stderr);
+        return nullptr;
     }
 
     auto temp = root;
+
+    Node* temp1 = nullptr;
+
     while (temp) {
-        if (name > temp->name) {
-            temp = n;
-            break;
-        } else if (name < temp->name){
-            temp->left = n;
+        temp1 = temp;
+        if (name < temp->name) {
+            temp = temp->left;
         } else {
+            temp = temp->right;
         }
     }
 
+    if (!temp1) {
+        temp1 = n;
+    } else if (name < temp1->name) {
+        temp1->left = n;
+    } else {
+        temp1->right = n;
+    }
 
-//    while (temp) {
-//        if (name > temp->name) {
-//            temp = temp->right;
-//        } else {
-//            temp = temp->left;
-//        }
-//    }
-
-    temp = n;
-    return true;
+    return temp1;
 }
 
+bool inline remove(Node*& root, const char* name) {
+    if (!root) {
+        return false;
+    }
+    if (name > root->name) {
+        return remove(root->right, name);
+    } else if (name < root->name) {
+        return remove(root->left, name);
+    } else {
+        free(root);
+    }
+}
 
+void findPred(Node* root, Node*& pred, const char* name) {
+    if (root == nullptr) {
+        pred = nullptr;
+        return;
+    }
+
+    auto temp = root->left;
+
+    decltype(temp) temp1 = nullptr;
+    while (temp) {
+        temp1 = temp;
+        temp = temp->right;
+    }
+
+    pred = temp1;
+}
