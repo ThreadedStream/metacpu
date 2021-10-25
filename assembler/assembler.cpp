@@ -9,10 +9,6 @@
 
 
 
-// 0 -> 0xFF
-// data section -> [0xF0, 0xFF]
-
-
 void Assembler::generateSymbolTable() {
     assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
     uint8_t pc{0};
@@ -34,7 +30,7 @@ void Assembler::generateSymbolTable() {
             token += curr_c;
 
             const auto it = instructions.find(token);
-            // increment pc in case of encountered instruction
+            // increment pc when encountered an instruction
             if (it != instructions.cend() && pos + 1 < len && isspace(asm_source_[pos + 1])) {
                 fprintf(stdout, "Token: %s, Mode: %d\n", token.c_str(), static_cast<uint32_t>(it->second));
                 pc++;
