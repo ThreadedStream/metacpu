@@ -21,4 +21,5 @@ enum {
     BIG = 0x0D00,
     BIL = 0x0E00,
     OUTB = 0x0F00,
+    RET  = 0x1000,
 };

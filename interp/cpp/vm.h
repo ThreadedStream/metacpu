@@ -10,6 +10,11 @@
 
 // Cpp-includes
 #include <string>
+#include <stack>
+
+// Local includes
+#include <errors.h>
+
 
 // some constant values
 constexpr uint16_t preamble_size = 12;
@@ -145,6 +150,9 @@ private:
 	
 	void bil(uint8_t addr);
 
+    void ret();
+
 private:
     vm *vm_;
+    std::stack<uint8_t> stack_;
 };

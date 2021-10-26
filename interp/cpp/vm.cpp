@@ -80,6 +80,9 @@ void Interpreter::simulate() {
             case BIL:
                 bil(instr & value_mask);
                 break;
+            case RET:
+                ret();
+                break;
             default:
                 printf("unknown instruction %d", opcode);
                 break;
@@ -125,6 +128,7 @@ void Interpreter::clac() {
 // The same goes for every jump instruction
 void Interpreter::bnz(uint8_t addr) {
     if (!is_zf_set(vm_->flags)) {
+        stack_.push(vm_->pc);
         // assign addr - 1, since pc is incremented each loop
         vm_->pc = addr - 1;
     }
@@ -132,11 +136,13 @@ void Interpreter::bnz(uint8_t addr) {
 
 void Interpreter::bz(uint8_t addr) {
     if (is_zf_set(vm_->flags)) {
+        stack_.push(vm_->pc);
         vm_->pc = addr - 1;
     }
 }
 
 void Interpreter::ucb(uint8_t addr) {
+    stack_.push(vm_->pc);
     vm_->pc = addr - 1;
 }
 
@@ -168,12 +174,19 @@ void Interpreter::outb() {
 
 void Interpreter::big(uint8_t addr) {
     if (!is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
+        stack_.push(vm_->pc);
         vm_->pc = addr - 1;
     }
 }
 
 void Interpreter::bil(uint8_t addr) {
     if (is_sf_set(vm_->flags) && !is_zf_set(vm_->flags)) {
+        stack_.push(vm_->pc);
         vm_->pc = addr - 1;
     }
+}
+
+void Interpreter::ret() {
+    vm_->pc = stack_.top();
+    stack_.pop();
 }
