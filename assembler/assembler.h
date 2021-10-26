@@ -41,8 +41,9 @@ constexpr uint8_t address_space_size = 0xFF;
 class Assembler {
 public:
     explicit Assembler(const char *path, const std::string &output_file) {
-        asm_source_ = tools::cStyleLoadFileIntoMemory(path);
-        assert(asm_source_ != nullptr && "asm_source_ is nullptr");
+		uint32_t size = 0;
+		asm_source_ = tools::cStyleLoadFileIntoMemory(path, &size);
+		assert(asm_source_ != nullptr && "asm_source_ is nullptr");
 		address_space_.resize(address_space_size);
 		data_section_ptr = 0xF0;
 		

@@ -2,8 +2,29 @@
 
 #include <fstream>
 #include <filesystem>
+#include "../common/errors.h"
 
 namespace tools {
+	
+	static inline char* stripNonAsciiGarbageOff(const char* target, uint32_t size) {
+		char* out = static_cast<char*>(calloc(size, sizeof(char)));
+		if (!out) {
+			fputs(errors[FAILED_TO_ALLOCATE_MEMORY], stderr);
+			return nullptr;
+		}
+
+		int32_t j = 0;
+		for (int32_t i = 0; i < size; ++i) {
+			if (isascii(target[i])) {
+				out[j] = target[i];
+				j++;
+			}
+		}
+
+		return out;
+		
+	}
+
     static char *cppStyleLoadFileIntoMemory(const char *const path) {
         std::ifstream stream(path, std::ios::in | std::ios::app);
         if (!stream) {
@@ -33,8 +54,14 @@ namespace tools {
         return src;
     }
 
-    static char *cStyleLoadFileIntoMemory(const char *const path) {
-        FILE *stream = fopen(path, "rb");
+    static char *cStyleLoadFileIntoMemory(const char *const path, uint32_t *size) {
+		// TODO(threadedstream): when opened in binary mode, buffer also retrieves
+		// some piece of shitty garbage. I probably should investigate this problem further, inasmuch as
+		// comparison of the number of read bytes against the actual file size, which in turn
+		// happens to be a result of calling ftell, ends up evaluated as true, thus proceeding 
+		// to execution block containing report of an error and returning nullptr. The most 
+		// surprising consequence of this whole C++ opera is that buffer does not contain any garbage anymore -- just a plain ascii text. 
+        FILE *stream = fopen(path, "r");
         if (!stream) {
             fputs("[[error]] make sure that path to the file is correct\n", stderr);
             return nullptr;
@@ -52,12 +79,14 @@ namespace tools {
 
 
         const auto read = fread(buffer, sizeof(char), len, stream);
-        if (read != len) {
-            fprintf(stderr, "[[error]] failed to read from a file, left to read %ld characters", len - read);
-            return nullptr;
-        }
+        //if (read != len) {
+        //    fprintf(stderr, "[[error]] failed to read from a file, left to read %ld characters", len - read);
+        //    return nullptr;
+        //}
 
         fclose(stream);
+
+		*size = len;
 
         return buffer;
     }

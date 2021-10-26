@@ -7,15 +7,13 @@
 #include "token.h"
 #include "instruction.h"
 
-
-
 void Assembler::generateSymbolTable() {
     assert(asm_source_ != nullptr && "asm_source_ is nullptr!!!");
     uint8_t pc{0};
     const auto len = strlen(asm_source_);
     std::string token;
     char curr_c;
-    for (uint32_t pos = 0; pos < len, isascii(asm_source_[pos]); ++pos) {
+    for (uint32_t pos = 0; pos < len && isascii(asm_source_[pos]); ++pos) {
         curr_c = asm_source_[pos];
         if (curr_c == '.') {
             // advance position in order to skip '.'
@@ -31,7 +29,7 @@ void Assembler::generateSymbolTable() {
 
             const auto it = instructions.find(token);
             // increment pc when encountered an instruction
-            if (it != instructions.cend() && pos + 1 < len && isspace(asm_source_[pos + 1])) {
+            if (it != instructions.cend() && pos + 1 < len  && isspace(asm_source_[pos + 1])) {
                 fprintf(stdout, "Token: %s, Mode: %d\n", token.c_str(), static_cast<uint32_t>(it->second));
                 pc++;
                 nextLine(pos, len);
