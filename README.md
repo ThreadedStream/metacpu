@@ -91,6 +91,25 @@ For simplicity sake, we might want to keep first 16 addresses reserved for .data
 
 Here's a list of supported instructions with their respective opcodes <br>
 ```cpp
+// addi - (add immediate)
+// add  - (add value the address points to)
+// subi - (sub immediate)
+// sub  - (sub value the address points to)
+// clac - (clear acc)
+// bnz  - (branch-if-not-zero)
+// bz   - (branch-if-zero)
+// ucb  - (unconditional-branch)
+// str  - (store value of acc into address)
+// leave -(terminate the execution of a program)
+// cmp - (compare value with acc)
+// outd - (treat value in acc as an integer and output it to console)
+// outb - (treat value in acc as a char and output it to console)
+// big - (branch-if-greater)
+// bil - (branch-if-less)
+// ret - (return from subroutine)
+// submem - (subtract one from value the label points to, i.e submem x will subtract one from a value assigned to x)
+// addmem - (add one to the value the label points to,i.e same as in submem, albeit now using add instead of sub)
+
 static std::unordered_map<std::string, uint8_t> opcodes = {
         {"addi",  0x00},
         {"add",   0x01},
@@ -114,3 +133,6 @@ static std::unordered_map<std::string, uint8_t> opcodes = {
 };
 ```
 
+# How to play with it?
+Getting result of written metasm code is a two stage process. First, the source must be assembled, and only then fed to vm, which will effectively (or not so) interpret encoded
+instructions giving each of them some meaning. Each component is built using cmake. 
