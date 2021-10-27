@@ -128,6 +128,10 @@ private:
 
     void sub(uint8_t addr);
 
+	void addmem(uint8_t addr);
+	
+	void submem(uint8_t addr);
+
     void clac();
 
     void bnz(uint8_t addr);

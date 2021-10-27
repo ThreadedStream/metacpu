@@ -47,6 +47,12 @@ void Interpreter::simulate() {
             case SUB:
                 sub(instr & value_mask);
                 break;
+			case ADDMEM:
+				addmem(instr & value_mask);
+				break;
+			case SUBMEM:
+				submem(instr & value_mask);
+				break;
             case CLAC:
                 clac();
                 break;
@@ -90,8 +96,6 @@ void Interpreter::simulate() {
         pc++;
     }
 
-    printf("leave\n");
-
 }
 
 void Interpreter::addi(uint8_t value) {
@@ -114,6 +118,14 @@ void Interpreter::sub(uint8_t addr) {
     const auto value = vm_->memory[addr];
     vm_->acc -= value;
     SET_FLAGS
+}
+
+void Interpreter::addmem(uint8_t addr) {
+	vm_->memory[addr] += 1;
+}
+
+void Interpreter::submem(uint8_t addr) {
+	vm_->memory[addr] -= 1;
 }
 
 void Interpreter::clac() {

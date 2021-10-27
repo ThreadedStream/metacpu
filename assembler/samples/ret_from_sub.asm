@@ -3,14 +3,18 @@ clac
     ucb do_smth
     ucb end
 
-.print_char:
-    outb
-    ret
-
 .do_smth:
     addi 101
-    ucb print_char
+	outb
+	clac
+	submem counter
+	cmp counter
+	bnz do_smth
     ret
 
 .end:
     leave
+
+BEGINDATA{ 
+	counter = 2
+}

@@ -22,4 +22,6 @@ enum {
     BIL = 0x0E00,
     OUTB = 0x0F00,
     RET  = 0x1000,
+	SUBMEM = 0x1100,
+	ADDMEM = 0x1200,
 };

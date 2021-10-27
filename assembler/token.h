@@ -31,7 +31,9 @@ static std::unordered_map<std::string, InstructionMode> instructions = {
         {"big",   InstructionMode::MEMORY},
         {"bil",   InstructionMode::MEMORY},
         {"outb",  InstructionMode::NONE},
-        {"ret", InstructionMode::NONE}
+        {"ret", InstructionMode::NONE},
+		{"submem", InstructionMode::MEMORY},
+		{"addmem", InstructionMode::MEMORY}
 };
 
 enum class TokenType : unsigned {

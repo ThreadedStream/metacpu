@@ -38,6 +38,8 @@ static std::unordered_map<std::string, uint8_t> opcodes = {
         {"bil",   0x0E},
         {"outb",  0x0F},
         {"ret",   0x10},
+		{"submem", 0x11},
+		{"addmem", 0x12}
 };
 
 
