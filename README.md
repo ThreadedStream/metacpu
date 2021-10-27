@@ -88,3 +88,29 @@ Here's the dumbest possible way to write "Hello world" program in metasm
   }
 ```
 For simplicity sake, we might want to keep first 16 addresses reserved for .data section. The rest of space is allotted to the actual program.
+
+Here's a list of supported instructions with their respective opcodes <br>
+```cpp
+static std::unordered_map<std::string, uint8_t> opcodes = {
+        {"addi",  0x00},
+        {"add",   0x01},
+        {"subi",  0x02},
+        {"sub",   0x03},
+        {"clac",  0x04},
+        {"bnz",   0x05},
+        {"bz",    0x06},
+        {"ucb",   0x07},
+        {"str",   0x08},
+        {"leave", 0x09},
+        {"cmp",   0x0A},
+        {"cmpi",  0x0B},
+        {"outd",  0x0C},
+        {"big",   0x0D},
+        {"bil",   0x0E},
+        {"outb",  0x0F},
+        {"ret",   0x10},
+        {"submem", 0x11},
+        {"addmem", 0x12},
+};
+```
+
