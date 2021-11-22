@@ -3,7 +3,7 @@ project(metacpu_asm)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(HEADER_FILES assembler.h tools.h token.h bin_tree.h)
+set(HEADER_FILES assembler.h tools.h token.h ../common/bin_tree.h)
 set(SOURCES assembler.cpp main.cpp)
 
 add_executable(metacpu_asm ${HEADER_FILES} ${SOURCES})

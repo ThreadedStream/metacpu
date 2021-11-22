@@ -8,10 +8,11 @@
 
 struct Node {
     const char *name; // 8
+    Node* parent; // 8
     Node *right; // 8
     Node *left; // 8
     uint8_t value; // 1
-    bool    to_be_freed{false};
+    bool    to_be_freed{false}; // 1
 
     inline void ingest(const Node& other) {
         name = other.name;
@@ -54,15 +55,17 @@ static inline Node *insert(Node *root, const char *name, const uint8_t value) {
         temp1 = n;
     } else if (strcmp(name, temp1->name) < 0) {
         temp1->left = n;
+        n->parent = temp1;
     } else if (strcmp(name, temp1->name) > 0){
         temp1->right = n;
+        n->parent = temp1;
     } else {
         free(n);
         n = nullptr;
         return nullptr;
     }
 
-    return temp1;
+    return n;
 }
 
 static Node *& find(Node *&root, const char *name) {
@@ -80,47 +83,60 @@ static Node *& find(Node *&root, const char *name) {
     }
 }
 
-inline void findIop(Node *& node, Node*& pred) {
-    // in-order predecessor is possible iff the left subtree of a given node exists
-    if (!node->left) {
+inline void findIop(Node * node, Node*& pred) {
+    if (!node) {
         return;
     }
 
-    void* node_raw = (void*) node;
+    if (!node->left) {
+        // not really sure about that one
 
-    node = node->left;
-    pred = node;
-    while (node && node->right) {
-        pred = node->right;
-        node = node->right;
+        while (node->parent) {
+            if (node->parent->right == node) {
+                pred = node->parent;
+                return;
+            }
+            node = node->parent;
+        }
+    } else {
+        node = node->left;
+        pred = node;
+        while (node && node->right) {
+            pred = node->right;
+            node = node->right;
+        }
     }
-
-    node = (Node* ) node_raw;
 
     return;
 }
 
 // find in-order successor of a node
-inline void findIos(Node *& node, Node*& succ) {
-    // in-order successor is possible iff the right subtree of a given node exists
-    if (!node->right) {
+inline void findIos(Node * node, Node*& succ) {
+    // excluding case when node is nullptr
+    if (!node) {
         return;
     }
 
-    void *raw_node = (void*) node;
+    if (!node->right) {
+        // not sure
+        while (node->parent) {
+            if (node->parent->left == node) {
+                succ = node->parent;
+                return;
+            }
+            node = node->parent;
+        }
+    } else {
+        node = node->right;
 
-    node = node->right;
-
-    // at that point, we traverse the right subtree to find a minimum element, i.e
-    // we traverse down to a left-most leaf
-    succ = node;
-    while (node && node->left) {
-        succ = node->left;
-        node = node->left;
+        // at that point, we traverse the right subtree to find a minimum element, i.e
+        // we traverse down to a left-most leaf
+        succ = node;
+        while (node && node->left) {
+            succ = node->left;
+            node = node->left;
+        }
     }
-
-    // restore node's passed-in address
-    node = (Node* ) raw_node;
 
     return;
 }
